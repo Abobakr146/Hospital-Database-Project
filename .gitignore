@@ -1,0 +1,79 @@
+## Your existing content (unchanged) ##
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+ScaffoldingReadMe.txt
+*.nupkg
+*.snupkg
+~$*
+*~
+CodeCoverage/
+*.binlog
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+## New additions (no duplicates) ##
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE files
+## IDE files ##
+.vs/
+**/.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.cache
+*.docstates
+
+# Local settings (security)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.private.json
+*secrets.json
+el7erafe-firebase-adminsdk-fbsvc-5bb50fcac6.json
+
+# Output
+/publish/
+
+# Docker
+.dockerignore
+
+# Coverage
+coverage.json
+coverage.cobertura.xml
+*.coverage
+*.lcov
+
+# Package manager
+packages/
+
+# Entity Framework (designer files only)
+Migrations/*.Designer.cs
+
+# OS files
+.DS_Store
+*~
+venv
+*.bin
