@@ -34,11 +34,8 @@ namespace DBApplication
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
@@ -46,6 +43,23 @@ namespace DBApplication
 
             app.MapControllers();
 
+            app.Urls.Add("http://localhost:5000");
+
+            Task.Run(() =>
+            {
+                System.Threading.Thread.Sleep(2000);
+                try
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "http://localhost:5000/swagger",
+                        UseShellExecute = true
+                    });
+                }
+                catch {}
+            });
+
+            // Start the API
             app.Run();
         }
     }
