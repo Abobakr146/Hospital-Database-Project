@@ -42,13 +42,59 @@ namespace DBApplication.Controllers
         }
 
         /// <summary>
+        /// Get all appointments for a specific patient
+        /// </summary>
+        /// <remarks>Retrieves a list of all appointments scheduled for a specific patient.</remarks>
+        [HttpGet("patient/{patientId}", Name = "GetAppointmentsByPatientId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsByPatient(string patientId)
+        {
+            if (!await _context.Patients.AnyAsync(p => p.PatientId == patientId))
+            {
+                return NotFound($"Patient with ID '{patientId}' was not found.");
+            }
+
+            return await _context.Appointments
+                .Where(a => a.PatientId == patientId)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Get all appointments for a specific doctor
+        /// </summary>
+        /// <remarks>Retrieves a list of all appointments assigned to a specific doctor.</remarks>
+        [HttpGet("doctor/{doctorId}", Name = "GetAppointmentsByDoctorId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsByDoctor(string doctorId)
+        {
+            if (!await _context.Doctors.AnyAsync(d => d.DoctorId == doctorId))
+            {
+                return NotFound($"Doctor with ID '{doctorId}' was not found.");
+            }
+
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .ToListAsync();
+        }
+
+        /// <summary>
         /// Schedules a new medical appointment.
         /// </summary>
         /// <remarks>Creates a new appointment record linking a patient to a doctor at a specific date and time.</remarks>
         [HttpPost("schedule", Name = "CreateAppointment")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Appointment>> PostAppointment(AppointmentDto dto)
         {
+            // PROACTIVE CHECKS
+            if (!await _context.Patients.AnyAsync(p => p.PatientId == dto.PatientId))
+                return BadRequest($"Patient with ID '{dto.PatientId}' does not exist.");
+
+            if (!await _context.Doctors.AnyAsync(d => d.DoctorId == dto.DoctorId))
+                return BadRequest($"Doctor with ID '{dto.DoctorId}' does not exist.");
+
             var appointment = new Appointment
             {
                 ApptDate = dto.ApptDate,
@@ -69,9 +115,17 @@ namespace DBApplication.Controllers
         /// <remarks>Modifies properties of a specific appointment.</remarks>
         [HttpPut("update/{id}", Name = "UpdateAppointment")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutAppointment(short id, AppointmentDto dto)
         {
+            // PROACTIVE CHECKS
+            if (!await _context.Patients.AnyAsync(p => p.PatientId == dto.PatientId))
+                return BadRequest($"Patient with ID '{dto.PatientId}' does not exist.");
+
+            if (!await _context.Doctors.AnyAsync(d => d.DoctorId == dto.DoctorId))
+                return BadRequest($"Doctor with ID '{dto.DoctorId}' does not exist.");
+
             var appointment = await _context.Appointments.FindAsync(id);
             if (appointment == null) return NotFound();
 
