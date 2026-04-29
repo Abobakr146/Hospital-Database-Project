@@ -14,6 +14,17 @@ namespace DBApplication
             builder.Services.AddDbContext<HospitalDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
+                    });
+            });
+
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -37,29 +48,34 @@ namespace DBApplication
             app.UseSwagger();
             app.UseSwaggerUI();
 
+            app.UseRouting();
+            app.UseCors("AllowAll");
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
             app.MapControllers();
 
-            app.Urls.Add("http://localhost:5000");
-
-            Task.Run(() =>
+            if (!System.Diagnostics.Debugger.IsAttached)
             {
-                System.Threading.Thread.Sleep(2000);
-                try
-                {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                    {
-                        FileName = "http://localhost:5000/swagger",
-                        UseShellExecute = true
-                    });
-                }
-                catch {}
-            });
+                app.Urls.Add("http://localhost:5000");
 
-            // Start the API
+                Task.Run(() =>
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    try
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = "http://localhost:5000/swagger",
+                            UseShellExecute = true
+                        });
+                    }
+                    catch { }
+                });
+            }
+
             app.Run();
         }
     }
