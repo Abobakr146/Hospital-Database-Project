@@ -1,3 +1,12 @@
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'HospitalDB')
+BEGIN
+    CREATE DATABASE HospitalDB;
+END
+GO
+
+USE HospitalDB;
+GO
+
 -- disable Doctor and Department tables' constraints temporarily to drop tables
 IF OBJECT_ID('fk_department_doctor', 'f') IS NOT NULL
 	ALTER TABLE Doctor DROP CONSTRAINT fk_department_doctor;
